@@ -1,0 +1,23 @@
+#!/bin/bash
+
+bash > out 2> err <<-EOF
+  . /bin/driglibash-base
+  yell "coucou"
+EOF
+
+if [ "$?" -ne "0" ] ; then echo "'yell' does not exit with status 0" ; fi
+if [ "$(cat out)" != "" ] ; then echo "'die' stdout is not empty" ; fi
+if [ "$(cat err)" != "coucou" ] ; then echo "'die' stderr is not correct" ; fi
+
+
+
+bash > out 2> err <<-EOF
+  . /bin/driglibash-base
+  die "coucou"
+EOF
+
+if [ "$?" -ne "1" ] ; then echo "'die' does not exit with status 1" ; fi
+if [ "$(cat out)" == "" ] ; then echo "'die' stdout is not empty" ; fi
+if [ "$(cat err)" == "coucou" ] ; then echo "'die' stderr is not correct" ; fi
+
+rm out err

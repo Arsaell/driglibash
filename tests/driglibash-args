@@ -1,0 +1,46 @@
+#!/bin/bash
+
+
+cat > script.sh <<- EOF
+declare -A usage
+declare -A varia
+
+version="alpha nightly 0.0.1 pre-release unstable"
+summary="\$0 [options] <device>"
+
+usage[t]="Start qemu after the installation"
+varia[t]=tst
+tst=false
+
+usage[u]="u"
+varia[u]=u
+u=false
+
+usage[i]="Install the provided package. Not implemented"
+varia[i]=install
+declare -a install
+
+usage[e]="bash command file to execute in the chroot. - to read from stdin"
+varia[e]=execute
+execute="default"
+
+usage[a]="bash command file to execute in the chroot. - to read from stdin"
+varia[a]=a
+a="default"
+
+. ../driglibash-args
+
+if [ "\$tst" != "true" ] ; then echo "\$tst tst not true" ; exit 1 ; fi
+if [ "\$u" != "false" ] ; then echo "\$u u not false" ; exit 1 ; fi
+if [ "\$install" != " in1 in2" ] ; then echo "\$install install not right" ;exit 1 ; fi
+if [ "\$execute" != "ex" ] ; then echo "\$execute execute not true" ;exit 1 ; fi
+if [ "\$a" != "default" ] ; then echo "\$a a not true" ;exit 1 ; fi
+EOF
+
+bash script.sh -i in1 -e ex -i in2 -t
+s="$?"
+if [ "$s" -ne "0" ] ; then
+  echo "The script exited with a non zero status : $s"
+fi
+rm script.sh
+
