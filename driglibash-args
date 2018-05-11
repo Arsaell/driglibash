@@ -37,7 +37,7 @@ usage() {
   for key in "${!usage[@]}" ; do
     if [ "$(driglibash_arg_type "$key")" == "single_value" ] ; then
       name="${varia[$key]}"
-      default=" (default :  ${!name})"
+      default=" (default : ${!name})"
     else
       default=
     fi
