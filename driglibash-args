@@ -35,9 +35,15 @@ usage() {
   yell "Usage: $summary"
   yell "Parameters:"
   for key in "${!usage[@]}" ; do
-    yell "  -$key ${usage[$key]}"
+    if [ "$(driglibash_arg_type "$key")" == "single_value" ] ; then
+      name="${varia[$key]}"
+      default=" (default :  ${!name})"
+    else
+      default=
+    fi
+    yell "  -$key ${usage[$key]}$default"
   done
-  yell "-h print this help, version and exit."
+  yell "  -h print this help, version and exit."
 }
 
 # Guess the variable type
