@@ -12,6 +12,7 @@ yell() {
 # Print an error, clean and exit #
 die() {
   yell "$@"
+  clean
   exit 1
 }
 
@@ -33,14 +34,16 @@ run() {
 # Record command lines passed as argument and execute them all when called without args #
 # One argument = One command #
 clean() {
-  if [ $# -gt 0 ] ; then
+  if [ "$#" -eq 1 ] ; then
     driglibash_clean_actions+=("$@")
-  else
+  elif [ "$#" -eq 0 ] ; then
     echo "Cleaning"
     for action in "${driglibash_clean_actions[@]}" ; do
       echo "> $action"
       $action
     done
+  else
+    die "Clean can save one command at a time"
   fi
 }
 
