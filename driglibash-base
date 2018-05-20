@@ -4,6 +4,8 @@
 #               https://github.com/adrianamaglio/driglibash
 ###############################################################################
 
+trap 'die "Received sigint"' INT
+
 # Output on standard error output #
 yell() {
   echo >&2 -e "$@"
