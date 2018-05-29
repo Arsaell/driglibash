@@ -44,6 +44,7 @@ usage() {
     yell "  -$key ${usage[$key]}$default"
   done
   yell "  -h print this help, version and exit."
+  exit 0
 }
 
 # Guess the variable type

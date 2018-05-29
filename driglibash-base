@@ -36,16 +36,28 @@ run() {
 # Record command lines passed as argument and execute them all when called without args #
 # One argument = One command #
 clean() {
-  if [ "$#" -eq 1 ] ; then
-    driglibash_clean_actions+=("$@")
-  elif [ "$#" -eq 0 ] ; then
+  if [ "$#" -eq 0 ] ; then
     echo "Cleaning"
     for action in "${driglibash_clean_actions[@]}" ; do
       echo "> $action"
       $action
     done
+  elif [ "$#" -eq 1 ] ; then
+    tmp_array=()
+    found=
+    for action in "${driglibash_clean_actions[@]}" ; do
+      if [ "$action" != "$1" ] ; then
+        tmp_array+=(${action})
+      else
+        found=true
+      fi
+    done
+    
+    if [ -z "$found" ] ; then tmp_array+=(${1}) ; fi
+    driglibash_clean_actions=("${tmp_array[@]}")
+    unset tmp_array
   else
-    die "Clean can save one command at a time"
+    die "Bad clean usage, receveid more than one arg"
   fi
 }
 
