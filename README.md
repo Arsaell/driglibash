@@ -15,6 +15,13 @@ $ clean "echo file"
 $ clean
 file
 ```
+If you supply a command that is already in cleans memory, it will be removed and wont be executed at all when cleaning.
+```
+$ clean "echo file"
+$ clean "echo file"
+$ clean 
+# Nothing to do
+```
 
 ### die
 Like yell but clean and exit too.
@@ -24,6 +31,9 @@ Die if the user is not root
 
 ### run
 Execute a command adn clean and exit if it returns a non zero status.
+
+### where
+Tells you where is the script being executed. Useful when you want to access som files next to your executable. If any non void argument is provided, `where` will follow symlinks and find the linked script file.
 
 ## driglibash-args
 A little framework for argument parsing in bash. It already contains driglibash-base
