@@ -61,7 +61,7 @@ clean() {
   fi
 }
 
-# tells where your executable is. Follow simlinks if any argument provided
+# tells where your executable is (absolute path). Follow simlinks if any argument provided
 where() {
   if [ -z "$1" ] ; then
     echo "$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

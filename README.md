@@ -33,7 +33,7 @@ Die if the user is not root
 Execute a command adn clean and exit if it returns a non zero status.
 
 ### where
-Tells you where is the script being executed. Useful when you want to access som files next to your executable. If any non void argument is provided, `where` will follow symlinks and find the linked script file.
+Tells you where (in absolute path) is the script being executed. Useful when you want to access som files next to your executable. If any non void argument is provided, `where` will follow symlinks and find the linked script file.
 
 ## driglibash-args
 A little framework for argument parsing in bash. It already contains driglibash-base
