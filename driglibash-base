@@ -45,17 +45,15 @@ clean() {
   elif [ "$#" -eq 1 ] ; then
     tmp_array=()
     found=
-    for action in "${driglibash_clean_actions[@]}" ; do
-      if [ "$action" != "$1" ] ; then
-        tmp_array+=(${action})
-      else
+    for i in "${!driglibash_clean_actions[@]}" ; do
+      if [ "${driglibash_clean_actions[$i]}" == "$1" ] ; then
+        unset driglibash_clean_actions[$i] 
         found=true
+        break
       fi
     done
     
-    if [ -z "$found" ] ; then tmp_array+=(${1}) ; fi
-    driglibash_clean_actions=("${tmp_array[@]}")
-    unset tmp_array
+    if [ -z "$found" ] ; then driglibash_clean_actions+=("${1}") ; fi
   else
     die "Bad clean usage, receveid more than one arg"
   fi
@@ -63,10 +61,11 @@ clean() {
 
 # tells where your executable is (absolute path). Follow simlinks if any argument provided
 where() {
-  if [ -z "$1" ] ; then
-    echo "$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  if [ -z "$1" ] ; then die "You need to supply some place for me to tell you where it is" ; fi
+  if [ -z "$2" ] ; then
+    echo "$( cd -P "$( dirname "$1" )" && pwd )"
   else
-    SOURCE="${BASH_SOURCE[0]}"
+    SOURCE="$1"
     while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
       DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
       SOURCE="$(readlink "$SOURCE")"
