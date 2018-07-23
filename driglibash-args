@@ -28,7 +28,7 @@
 
 . /bin/driglibash-base
 
-#TODO order usage options
+#TODO keep order usage options
 # Print usage and exit in error
 usage() {
   yell "Version: $version"
