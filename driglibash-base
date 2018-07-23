@@ -27,14 +27,27 @@ root_or_die() {
 
 # Execute a command and die if it returns with error #
 run() {
-  "$@"
-  code=$?
-  [ $code -ne 0 ] && die "command [$*] failed with erro code $code"
+  while true ; do
+    "$@"
+    code=$?
+    if [ "$code" -ne 0 ] ; then
+      yell "command [$*] failed with error code $code"
+      if "$driglibash_run_retry" ; then
+        echo "Retry [Y/n] ?"
+        read answer
+        if [ "$answer" == "y" ] || [ "$answer" == "Y" ] || [ -z "$answer" ] ; then
+          continue
+        fi
+      fi
+    fi
+    die "Aborting"
+  done
 }
 
 # Clean exit #
 # Record command lines passed as argument and execute them all when called without args #
 # One argument = One command #
+# TODO append or prepend according to arg
 clean() {
   if [ "$#" -eq 0 ] ; then
     echo "Cleaning"
@@ -43,34 +56,41 @@ clean() {
       $action
     done
   elif [ "$#" -eq 1 ] ; then
-    tmp_array=()
-    found=
-    for i in "${!driglibash_clean_actions[@]}" ; do
-      if [ "${driglibash_clean_actions[$i]}" == "$1" ] ; then
-        unset driglibash_clean_actions[$i] 
-        found=true
-        break
-      fi
-    done
-    
-    if [ -z "$found" ] ; then driglibash_clean_actions+=("${1}") ; fi
+    driglibash_clean_actions+=("$1")
+  elif [ "$#" -eq 2 ] ; then
+    case "$1" in
+      "pre")
+        driglibash_clean_actions+=("$1")
+        ;;
+      "post")
+        driglibash_clean_actions+=("$1")
+        ;;
+      "del")
+        for i in "${!driglibash_clean_actions[@]}" ; do
+          if [ "$1" == "$i" ] ; then
+            unset driglibash_clean_actions[$i] 
+            break
+          fi
+        done
+        ;;
+      *)
+        die "action '$1' not supported"
+    esac
   else
-    die "Bad clean usage, receveid more than one arg"
+    die "Bad clean usage, receveid more than three arg"
   fi
 }
 
 # tells where your executable is (absolute path). Follow simlinks if any argument provided
 where() {
-  if [ -z "$1" ] ; then die "You need to supply some place for me to tell you where it is" ; fi
-  if [ -z "$2" ] ; then
+  if [ -z "$1" ] ; then
     echo "$( cd -P "$( dirname "$1" )" && pwd )"
   else
-    SOURCE="$1"
+    SOURCE="$0"
     while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
       DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
       SOURCE="$(readlink "$SOURCE")"
-      [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to    
-the path where the symlink file was located
+      [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
     done
     DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
     
