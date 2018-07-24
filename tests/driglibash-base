@@ -1,23 +1,52 @@
 #!/bin/bash
 
+# Must be started in test directory
+
+# yell
+
 bash > out 2> err <<-EOF
-  . /bin/driglibash-base
+  . ../driglibash-base
   yell "coucou"
 EOF
 
 if [ "$?" -ne "0" ] ; then echo "'yell' does not exit with status 0" ; fi
-if [ "$(cat out)" != "" ] ; then echo "'die' stdout is not empty" ; fi
-if [ "$(cat err)" != "coucou" ] ; then echo "'die' stderr is not correct" ; fi
+if [ "$(cat out)" != "" ] ; then echo "'yell' stdout is not empty (got $(cat out))" ; fi
+if [ "$(cat err)" != "coucou" ] ; then echo "'yell' stderr is not correct (got $(cat err))" ; fi
 
 
+# die
 
 bash > out 2> err <<-EOF
-  . /bin/driglibash-base
+  . ../driglibash-base
   die "coucou"
 EOF
 
 if [ "$?" -ne "1" ] ; then echo "'die' does not exit with status 1" ; fi
 if [ "$(cat out)" == "" ] ; then echo "'die' stdout is not empty" ; fi
 if [ "$(cat err)" == "coucou" ] ; then echo "'die' stderr is not correct" ; fi
+
+# clean
+. ../driglibash-base
+clean 'a a a a'
+if [ "${driglibash_clean_actions[@]}" != "a a a a" ] ; then echo "clean with only command does not work" ; fi
+
+clean 'b b b'
+if [ "${driglibash_clean_actions[0]}" != "a a a a" ] ; then echo "clean append does not work 0" ; fi
+if [ "${driglibash_clean_actions[1]}" != "b b b" ] ; then echo "clean append does not work 1" ; fi
+
+clean del 'b b b'
+if [ "${driglibash_clean_actions[0]}" != "a a a a" ] ; then echo "clean del does not work 0" ; fi
+if [ -n "${driglibash_clean_actions[1]}" ] ; then echo "clean del does not work 1" ; fi
+
+clean post 'b b b'
+if [ "${driglibash_clean_actions[0]}" != "a a a a" ] ; then echo "clean post does not work 0" ; fi
+if [ "${driglibash_clean_actions[1]}" != "b b b" ] ; then echo "clean post does not work 1" ; fi
+
+clean pre 'b b b'
+if [ "${driglibash_clean_actions[0]}" != "b b b" ] ; then echo "clean pre does not work 0" ; fi
+if [ "${driglibash_clean_actions[1]}" != "a a a a" ] ; then echo "clean pre does not work 1" ; fi
+if [ "${driglibash_clean_actions[2]}" != "b b b" ] ; then echo "clean pre does not work 2" ; fi
+
+
 
 rm out err
