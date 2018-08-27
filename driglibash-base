@@ -32,16 +32,27 @@ run() {
     code=$?
     if [ "$code" -ne 0 ] ; then
       yell "command [$*] failed with error code '$code'"
-      if "$driglibash_run_retry" ; then
+      if [ -n "$driglibash_run_retry" ] ; then
         echo "Retry [Y/n] ?"
         read answer
         if [ "$answer" == "y" ] || [ "$answer" == "Y" ] || [ -z "$answer" ] ; then
           continue
         fi
       fi
+      die "Aborting"
+    else
+      break
     fi
-    die "Aborting"
   done
+}
+
+
+# Execute a commad in background and return its pid
+start(){
+  "$@" &
+  pid=$!
+  clean pre "kill $pid"
+  return $pid
 }
 
 # Clean exit #
@@ -62,7 +73,7 @@ clean() {
     case "$1" in
       "pre")
         declare -a tmp
-        tmp=(${driglibash_clean_actions[@]})
+        tmp=("${driglibash_clean_actions[@]}")
         driglibash_clean_actions=("$2")
         driglibash_clean_actions+=("${tmp[@]}")
         ;;
@@ -78,7 +89,7 @@ clean() {
         done
         ;;
       *)
-        die "action '$1' not supported"
+        die "clean: action '$1' not supported"
     esac
   else
     die "Bad clean usage, receveid more than two args"
