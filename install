@@ -1,0 +1,27 @@
+#!/bin/bash
+if [ "$UID" != 0 ] ; then
+  echo "You must be root"
+  exit 1
+fi
+
+if [ -f "./driglibash" ] ; then
+  echo "There already is a driglibash file here. Can’t clone"
+  exit 1
+fi
+
+# if no arg, need to download driglibash.
+if [ "$#" == 0 ] ; then
+  git clone https://github.com/adrian-amaglio/driglibash.git
+  path="./driglibash"
+  remove=true
+else
+  path="./"
+  remove=false
+fi
+
+cp "$path/driglibash-base" "$path/driglibash-args" /bin
+
+if $remove ; then
+#  rm -rf driglibash
+fi
+
