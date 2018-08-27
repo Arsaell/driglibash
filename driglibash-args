@@ -26,7 +26,7 @@
 # varia[e]=execute
 # declare -a execute
 
-. /bin/driglibash-base
+. driglibash-base
 
 #TODO keep order usage options
 # Print usage and exit in error
@@ -34,6 +34,7 @@ usage() {
   yell "Version: $version"
   yell "Usage: $summary"
   yell "Parameters:"
+  yell "  -h print this help, version and exit."
   for key in "${!usage[@]}" ; do
     if [ "$(driglibash_arg_type "$key")" == "single_value" ] ; then
       name="${varia[$key]}"
@@ -43,7 +44,6 @@ usage() {
     fi
     yell "  -$key ${usage[$key]}$default"
   done
-  yell "  -h print this help, version and exit."
   exit 0
 }
 
