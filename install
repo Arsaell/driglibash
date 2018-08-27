@@ -22,6 +22,6 @@ fi
 cp "$path/driglibash-base" "$path/driglibash-args" /bin
 
 if $remove ; then
-#  rm -rf driglibash
+  rm -rf driglibash
 fi
 
