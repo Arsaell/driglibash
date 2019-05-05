@@ -11,6 +11,35 @@ yell() {
   echo >&2 -e "$@"
 }
 
+# Output first parameter, second parameter times
+repeat() {
+  printf "$1"'%.s' $(eval "echo {1.."$(($2))"}")
+}
+
+# Output a "section title" to visually separate different script part
+section(){
+  if [ -n "$1" ] ; then
+    len="${#1}"
+    max_len="$(($(tput cols)-2))"
+    if [ "$len" -ge "$max_len" ] ; then
+      right=5
+      left=5
+    else
+      left="$((($max_len - $len)/2))"
+      right="$left"
+    fi
+  else
+    left=80
+    right=0
+  fi
+  repeat '=' "$left"
+  if [ "$right" -ge 1 ] ; then
+    echo -n " $1 "
+    repeat '=' "$right"
+    echo
+  fi
+}
+
 # Print an error, clean and exit #
 die() {
   yell "$@"
@@ -33,10 +62,12 @@ run() {
     if [ "$code" -ne 0 ] ; then
       yell "command [$*] failed with error code '$code'"
       if [ -n "$driglibash_run_retry" ] ; then
-        echo "Retry [Y/n] ?"
+        echo "Retry (s to skip command) [Y/s/n] ?"
         read answer
-        if [ "$answer" == "y" ] || [ "$answer" == "Y" ] || [ -z "$answer" ] ; then
+        if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ -z "$answer" ] ; then
           continue
+        elif [ "$answer" = "s" ] || [ "$answer" = "S" ] ; then
+          return "$code"
         fi
       fi
       die "Aborting"
@@ -64,7 +95,7 @@ clean() {
   if [ "$#" -eq 0 ] ; then
     echo "Cleaning"
     for action in "${driglibash_clean_actions[@]}" ; do
-      echo "> $action"
+      echo "driglibash_clean> $action"
       $action
     done
   elif [ "$#" -eq 1 ] ; then
@@ -82,17 +113,17 @@ clean() {
         ;;
       "del")
         for i in "${!driglibash_clean_actions[@]}" ; do
-          if [ "$2" == "${driglibash_clean_actions[$i]}" ] ; then
+          if [ "$2" = "${driglibash_clean_actions[$i]}" ] ; then
             unset driglibash_clean_actions[$i] 
             break
           fi
         done
         ;;
       *)
-        die "clean: action '$1' not supported"
+        die "driglibash_clean: action '$1' not supported"
     esac
   else
-    die "Bad clean usage, receveid more than two args"
+    die "driglibash_clean : Bad clean usage, receveid more than two args"
   fi
 }
 
@@ -113,3 +144,14 @@ where() {
   fi  
 }
 
+# Add the line $1 in file $2 if not present
+line_in_file() {
+  if [ "$#" -ne 2 ] ; then die "Bad usage of 'line_in_file'. Got '$#' parameters : '$@'" ; fi
+  if [ -z "$1" ] ; then die "Line arg is emtpy in 'line_in_file'" ; fi
+  line="$1"
+  if [ -z "$2" ] ; then die "File arg is emtpy in 'line_in_file'" ; fi
+  file="$2"
+  if [ ! -f "$file" ] ; then run touch "$file" ; fi
+
+  grep -q -x -F "$line" "$file" || echo "$line" >> "$file"
+}
