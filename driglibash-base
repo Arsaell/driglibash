@@ -32,6 +32,12 @@ section(){
     left=80
     right=0
   fi
+
+  # If the character number was rounded down
+  if [ "$(($left + $right + $len +1 ))" -eq "$max_len" ] ; then
+    left="$(($left+ 1))"
+  fi
+
   repeat '=' "$left"
   if [ "$right" -ge 1 ] ; then
     echo -n " $1 "
