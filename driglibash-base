@@ -68,7 +68,7 @@ run() {
     if [ "$code" -ne 0 ] ; then
       yell "command [$*] failed with error code '$code'"
       if [ -n "$driglibash_run_retry" ] ; then
-        echo "Retry (s to skip command) [Y/s/n] ?"
+        echo "Retry ? Retry (y), skip the command (s) or exit script(n) [Y/s/n] ?"
         read answer
         if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ -z "$answer" ] ; then
           continue
