@@ -2,6 +2,9 @@
 Simple helper script for bash, in bash.
 Those scripts are not optimized at all, they may be slow and ressources consuming. They are made for simplicity.
 
+## Installation
+`curl https://raw.githubusercontent.com/adrian-amaglio/driglibash/master/install | sudo bash`
+
 ## Driglibash-base
 This file contains some very basic functions that are wildely used. Since bash is pain to read, you better do a lot of them.
 
