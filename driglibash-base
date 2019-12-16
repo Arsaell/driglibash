@@ -4,6 +4,10 @@
 #               https://github.com/adrianamaglio/driglibash
 ###############################################################################
 
+# Set to true to make a pause at each step
+driglibash_steb_by_step=false
+
+
 trap 'die "Received sigint"' INT
 
 # Output on standard error output
@@ -44,7 +48,13 @@ section(){
     repeat '=' "$right"
     echo
   fi
+
+  if "$driglibash_steb_by_step" ; then
+    echo "Press enter to proceed"
+    read
+  fi
 }
+alias step=section
 
 # Print an error, clean and exit
 die() {
@@ -66,7 +76,7 @@ run() {
     "$@"
     code=$?
     if [ "$code" -ne 0 ] ; then
-      yell "command [$*] failed with error code '$code'"
+      yell "command [$*] failed with exit code '$code'"
       if [ -n "$driglibash_run_retry" ] ; then
         echo "Retry ? Retry (y), skip the command (s) or exit script(n) [Y/s/n] ?"
         read answer

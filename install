@@ -4,13 +4,14 @@ if [ "$UID" != 0 ] ; then
   exit 1
 fi
 
-if [ -f "./driglibash" ] ; then
-  echo "There already is a driglibash file here. Can’t clone"
-  exit 1
-fi
 
 # if no arg, need to download driglibash.
 if [ "$#" == 0 ] ; then
+  if [ -f "./driglibash" ] ; then
+    echo "There already is a driglibash file here. Can’t clone"
+    exit 1
+  fi
+
   git clone https://github.com/adrian-amaglio/driglibash.git
   path="./driglibash"
   remove=true
