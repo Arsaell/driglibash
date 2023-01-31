@@ -7,7 +7,24 @@
 # Set to true to make a pause at each step
 driglibash_steb_by_step=false
 
+###############################################################################
+#       Pieds-Nus's aliases
+###############################################################################
 
+alias ll = ls -Agh --color=auto
+
+# mkdir + cd
+mkcd() {
+	mkdir $1
+	cd $1
+}
+
+# cd + ll
+cl()  {
+cd $1
+ll
+}
+###############################################################################
 trap 'die "Received sigint"' INT
 
 # Output on standard error output
