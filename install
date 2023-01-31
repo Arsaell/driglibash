@@ -20,9 +20,9 @@ else
   remove=false
 fi
 
-cp "$path/driglibash-base" "$path/driglibash-args" /bin
+cp "$path/driglibash-base" "$path/driglibash-args" /usr/local/bin
 
 if $remove ; then
-  rm -rf driglibash
+  rm -rf "$path"
 fi
 
